@@ -1,3 +1,5 @@
+let chart = null;
+
 async function loadData() {
 
     const response = await fetch("/api/data");
@@ -25,7 +27,7 @@ async function loadData() {
         }
 
         sensors[row.id].push({
-            x: row.datetime,
+            x: new Date(row.datetime),   // ВАЖНО
             y: parseFloat(row.temperature)
         });
 
@@ -63,7 +65,11 @@ function drawChart(sensors) {
 
     const ctx = document.getElementById("chart");
 
-    new Chart(ctx, {
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
 
         type: "line",
 
@@ -72,8 +78,6 @@ function drawChart(sensors) {
         },
 
         options: {
-
-            parsing: false,
 
             scales: {
 
