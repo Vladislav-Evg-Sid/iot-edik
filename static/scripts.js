@@ -4,11 +4,9 @@ async function loadData() {
     const data = await response.json();
 
     const table = document.getElementById("table-body");
-
     table.innerHTML = "";
 
-    const labels = [];
-    const temps = [];
+    const sensors = {};
 
     data.forEach(row => {
 
@@ -22,28 +20,81 @@ async function loadData() {
 
         table.appendChild(tr);
 
-        labels.push(row.datetime);
-        temps.push(row.temperature);
+        if (!sensors[row.id]) {
+            sensors[row.id] = [];
+        }
+
+        sensors[row.id].push({
+            x: row.datetime,
+            y: parseFloat(row.temperature)
+        });
+
     });
 
-    drawChart(labels, temps);
+    drawChart(sensors);
 }
 
 
-function drawChart(labels, temps) {
+function randomColor() {
+
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+
+    return `rgb(${r},${g},${b})`;
+}
+
+
+function drawChart(sensors) {
+
+    const datasets = [];
+
+    for (const sensor in sensors) {
+
+        datasets.push({
+            label: sensor,
+            data: sensors[sensor],
+            borderColor: randomColor(),
+            fill: false,
+            tension: 0.1
+        });
+
+    }
 
     const ctx = document.getElementById("chart");
 
     new Chart(ctx, {
+
         type: "line",
 
         data: {
-            labels: labels,
-            datasets: [{
-                label: "Temperature",
-                data: temps
-            }]
+            datasets: datasets
+        },
+
+        options: {
+
+            parsing: false,
+
+            scales: {
+
+                x: {
+                    type: "time",
+                    time: {
+                        unit: "minute"
+                    }
+                },
+
+                y: {
+                    title: {
+                        display: true,
+                        text: "Temperature °C"
+                    }
+                }
+
+            }
+
         }
+
     });
 }
 
