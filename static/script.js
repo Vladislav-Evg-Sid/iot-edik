@@ -112,7 +112,7 @@ async function loadSensors() {
             <input id="name-${id}" value="${sensors[id]}">
         </td>
         <td>
-            <button onclick="saveSensor('${id}')">Save</button>
+            <button onclick="saveSensor('${id}')">Сохранить</button>
         </td>
         `;
 
@@ -136,6 +136,7 @@ async function saveSensor(id) {
         })
     });
 
+    loadData();
 }
 
 loadSensors();
