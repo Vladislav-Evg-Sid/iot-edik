@@ -102,4 +102,50 @@ function drawChart(sensors) {
     });
 }
 
+async function loadSensors() {
+
+    const response = await fetch("/api/sensors");
+    const sensors = await response.json();
+
+    const table = document.getElementById("sensor-table");
+    table.innerHTML = "";
+
+    for (const id in sensors) {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+        <td>${id}</td>
+        <td>
+            <input id="name-${id}" value="${sensors[id]}">
+        </td>
+        <td>
+            <button onclick="saveSensor('${id}')">Save</button>
+        </td>
+        `;
+
+        table.appendChild(tr);
+    }
+}
+
+
+async function saveSensor(id) {
+
+    const name = document.getElementById(`name-${id}`).value;
+
+    await fetch("/api/sensors", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: id,
+            name: name
+        })
+    });
+
+}
+
+loadSensors();
+
 loadData();
