@@ -2,8 +2,11 @@ let chart = null;
 
 async function loadData() {
 
-    const response = await fetch("/api/data");
-    const data = await response.json();
+    const dataResponse = await fetch("/api/data");
+    const data = await dataResponse.json();
+
+    const sensorResponse = await fetch("/api/sensors");
+    const sensorNames = await sensorResponse.json();
 
     const sensors = {};
 
@@ -20,7 +23,7 @@ async function loadData() {
 
     });
 
-    drawChart(sensors);
+    drawChart(sensors, sensorNames);
 }
 
 
@@ -34,14 +37,16 @@ function randomColor() {
 }
 
 
-function drawChart(sensors) {
+function drawChart(sensors, sensorNames) {
 
     const datasets = [];
 
     for (const sensor in sensors) {
 
+        const name = sensorNames[sensor] || sensor;
+
         datasets.push({
-            label: sensor,
+            label: name,
             data: sensors[sensor],
             borderColor: randomColor(),
             fill: false,
