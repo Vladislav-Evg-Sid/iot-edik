@@ -5,29 +5,16 @@ async function loadData() {
     const response = await fetch("/api/data");
     const data = await response.json();
 
-    const table = document.getElementById("table-body");
-    table.innerHTML = "";
-
     const sensors = {};
 
     data.forEach(row => {
-
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-        <td>${row.id}</td>
-        <td>${row.datetime}</td>
-        <td>${row.temperature}</td>
-        `;
-
-        table.appendChild(tr);
 
         if (!sensors[row.id]) {
             sensors[row.id] = [];
         }
 
         sensors[row.id].push({
-            x: new Date(row.datetime),   // ВАЖНО
+            x: new Date(row.datetime),
             y: parseFloat(row.temperature)
         });
 
